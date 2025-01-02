@@ -88,7 +88,6 @@ Array.prototype.reduce = (fn,value) => {
 
 // 手写树型化(列表转树)
 // array = [{id:1,name:'名字1',parent:2}...]
-
 const treeify = (array,parentId=null) =>{
     let tree =[];
     array.foreach((item)=> {
@@ -225,3 +224,12 @@ const merge = (arr1,arr2) =>{
 	}
 	return newArr;
 } 
+
+// 手写 trim 
+/*
+trim是字符串的方法,用于去除字符串首尾的空格
+常见的实现思路是使用正则表达式去实现
+*/
+String.prototype.trim = function(){
+	return this.replace(/^\s+|\s+$/g,'')
+}
