@@ -1,0 +1,227 @@
+// 手写promise.all 
+/*
+写的还是有点问题的,size这个变量其实是不需要的,反而是需要一个count变量
+count用于记录有几个promise被执行成功了,决定最后的resolve
+*/
+const all = (array) =>{
+    let result = [];
+    // let size = array.length;
+    // return new Promise ((resolve,reject) =>{
+    //     const addData = (index,data) => {
+    //         result[index] = data;
+    //         if(index === size) {
+    //             resolve(result);
+    //         }
+    //     }
+    //     array.foreach((promise,index)=>{
+    //         if(promise instanceof Promise){
+    //             promise.then(res=> addData(index,res),err=> reject(err))
+    //         }
+    //         else{
+    //             addData(index,promise)
+    //         }
+    //     })
+   	// })
+		let count=0;
+		return new Promise((resolve,reject)=> {
+			//写一个方法去记录count并将promise的结果存入数组
+			const addData = (index,res) =>{
+				result[index] = res;
+				count++;
+				if(count === array.length){
+					resolve(result);
+				}
+			}
+			array.foreach((promise,index)=> {
+				if(promise instanceof Promise){
+					promise.then(res=>addData(index,res),err => reject(err))
+				}
+				else{
+					addData(index,promise)
+				}
+			})
+		})
+}
+
+// 手写call
+/*
+这个有点忘了,该复习一下call,bind,apply这三者的区别和写法了
+call:改变函数this指向,可以传入多个参数
+apply:改变函数this指向,传入一个参数数组
+bind: 改变函数this指向,并且返回一个函数(不执行函数内容),可以传入多个参数
+*/
+Function.prototype.call = function(context,...args){
+    let result;
+    context = context || window;
+    context.fn = this;
+    result=context.fn(args);
+    delete context.fn;
+    return result;
+}
+
+//手写reduce
+/*
+reduce的思路还是理解的,但是代码写出来结果差点意思
+*/
+Array.prototype.reduce = (fn,value) => {
+    // if(!value){
+    //     value = this[0];
+    // }
+    // this.foreach((item)=>{
+    //     value += item.fn()
+    // })
+    // return value;
+    let result = value;
+    let i=0;
+    //防止没有初始值的情况
+    if(result === undefined){
+        result = this[i];
+        i++;
+    }
+    while(i<this.length){
+        //对数组每一个元素都执行一次fn,并将结果累积给result
+        result = fn(result,this[i]);
+        i++;
+    }
+    return result;
+}
+
+// 手写树型化(列表转树)
+// array = [{id:1,name:'名字1',parent:2}...]
+
+const treeify = (array,parentId=null) =>{
+    let tree =[];
+    array.foreach((item)=> {
+        if(item.parent === parentId){
+            let obj = {
+                id:item.id,
+                name: item.name,
+                children: treeify(array,item.id)
+            };
+           tree.push(obj);
+        }
+    })
+    return tree;
+}
+
+//手写防抖
+/*
+防抖:执行函数时在时间内如果再次执行需要重新计时(多次触发只执行最后一次)
+这里需要注意返回的函数不能写箭头函数,因为箭头函数没有arguments,无法获取参数
+*/
+const debounce = (fn,wait) =>{
+    // 计时器
+    let timer; 
+    // return () =>{
+		// 	if(timer){
+		// 			clearTimeout(timer);
+		// 	}
+		// 	timer = setTimeout(()=>{
+		// 		fn.apply(this,args)
+		// 	},wait)
+    // }
+		return function(){
+			let args = arguments;
+			if(timer){
+					clearTimeout(timer);
+			}
+			timer = setTimeout(()=>{
+				fn.apply(this,args)
+			},wait)
+		}
+}
+
+// 手写ajax
+/*
+ajax:使用原生的xhr请求数据,并对响应数据进行处理
+这个还是用的比较少的,特别是onreadystatechange这个函数,还有readyState这个属性
+readyState等于4表示已完成接收
+*/
+const URL = '目标地址'
+const xhr = new XMLHttpRequest();
+xhr.open('get',URL)
+
+xhr.onreadystatechange = () =>{
+		if(xhr.readyState !== 4)return;
+    if(xhr.readyState === 4){
+        if(xhr.status === 200){
+            //处理数据
+        }
+        else{
+            //处理错误
+        }
+    }
+}
+
+//手写instanceof
+/*
+instanceof原理就是通过原型判断当前对象是否出现在函数的原型链上,返回true或false
+获取原型最好不要直接用__proto__(es6),而是使用Object.getPrototypeOf(obj)
+*/
+const myInstanceof = (obj,fn) =>{
+	const proto = fn.prototype;
+	while(proto){
+		if(obj.__proto__ === proto){
+			return true;
+		}
+		proto = proto.__proto__ //Object.getPrototypeOf(proto)
+	}
+	return false;
+}
+
+//手写深拷贝 
+/*
+实现思路,先判断传入的数据的类型,然后遍历对象,是否是引用类型,然后选择是否递归调用
+*/
+const deepClone = (obj) =>{
+	// 对象类型判断
+	// if(typeof obj !== 'object'){
+	//     return obj;
+	// }
+	// let newObj = {}
+	let newObj = Array.isArray(obj)?[]:{} //判断是对象还是数组
+	for(let key in obj){
+		// 需要先判断是否存在这个key!!!!!!!!!!
+		if(obj.hasOwnProperty(key)){
+			if(obj[key]!== Object){
+				newObj[key]= obj[key];            
+			}
+			else{
+				newObj[key]=deepClone(obj[key]);    
+			}
+		}
+	}
+	return newObj
+}
+
+//手写数组合并
+/*
+实现思路:合并两个有序数组,遍历返回新数组
+*/
+const merge = (arr1,arr2) =>{
+	let newArr = [];
+	let i=0,j=0;
+	while(i<arr1.size()&&j<arr2.size()){
+		if(arr1[i]<=arr2[j]){
+			newArr.push(arr1[i]);
+			i++;
+		}
+		else{
+			newArr.push(arr2[j]);
+			j++;
+		}
+	}
+	if(i===arr1.size()){
+		while(j<arr2.size()){
+			newArr.push(arr2[j]);
+			j++;
+		}
+	}
+	if(j===arr2.size()){
+		while(i<arr1.size()){
+			newArr.push(arr1[i]);
+			i++;
+		}
+	}
+	return newArr;
+} 
