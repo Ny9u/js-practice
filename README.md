@@ -1,2 +1,2 @@
 # js-practice
-The record of JavaScript handwritten questions
+### 记录前端常见的面试手撕题,不定时更新
