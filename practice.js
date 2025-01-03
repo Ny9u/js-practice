@@ -241,3 +241,24 @@ sleep函数用来模拟代码延迟执行,一般用 promise和 setTimeout实现
 function sleep(time) {
 	return new Promise(resolve => setTimeout(resolve,time))
 }
+
+// 手写数组扁平化 (数组拍平)
+/*
+扁平化的意思是将数组中的嵌套数组清除,变成一个一维数组
+*/
+function flat() {
+	let newArr = []
+	// arr为需要处理的数组 n为需要拍平的层数,n=1为只拍平第一层
+	return function flatten(arr, n) {
+		const currentArr = []
+		arr.forEach((item)=>{
+			if(Array.isArray(item)){
+				currentArr.push(...item)
+			}else{
+				currentArr.push(item)
+			}
+		})
+		newArr = currentArr
+		return n > 1 ? flatten(newArr,n-1) : newArr
+	}
+}
