@@ -233,3 +233,11 @@ trim是字符串的方法,用于去除字符串首尾的空格
 String.prototype.trim = function(){
 	return this.replace(/^\s+|\s+$/g,'')
 }
+
+// 手写sleep 
+/*
+sleep函数用来模拟代码延迟执行,一般用 promise和 setTimeout实现
+*/ 
+function sleep(time) {
+	return new Promise(resolve => setTimeout(resolve,time))
+}
