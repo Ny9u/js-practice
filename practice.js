@@ -262,3 +262,28 @@ function flat() {
 		return n > 1 ? flatten(newArr,n-1) : newArr
 	}
 }
+
+// 返回数组中出现最多次的元素
+/*
+因为js中没有方便的数据结构可以使用,所以我们的思路一般就是遍历,使用对象或者map去记录次数
+*/
+Array.prototype.most = function(){
+	let map = new Map() 
+	let max = 0
+	let element = null
+	this.forEach((item) => {
+		if(map.has(item)){
+			map.set(item,map.get(item)+1)
+		}else {
+			map.set(item,1)
+		}
+	})
+	// 遍历map,获取最多次的元素
+	map.forEach((value,key)=>{
+		if(element === null || value > max){
+			max = value
+			element = key
+		}
+	})
+	return element
+}
