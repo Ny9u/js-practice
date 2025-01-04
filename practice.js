@@ -333,3 +333,28 @@ LRUCache.prototype.put = function(key, value) {
 	}
 	this.cache.set(key,value)
 };
+
+// 获取下一个质数
+/*
+这个不是很常见,主要思路还是通过闭包实现,检查number是否合法
+*/
+function getNextPrime(){
+	let number = 2
+	return function nextPrime(){
+		while(true){
+			let isPrime = true
+			for(let i=2;i<number;i++){
+				if(number % i === 0){
+					isPrime = false
+					number++
+					break
+				}
+			}
+			if(isPrime){
+				const prime = number
+				number++
+				return prime
+			}
+		}
+	}
+}
