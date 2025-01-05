@@ -387,3 +387,15 @@ function addSeparator(num) {
 	}
 	return res
 }
+
+// 手写正则表达式匹配日期
+/*
+这个还是第一次见,有点奇葩,记录一下
+*/
+const regExp = /^\d{4}-\d{2}-\d{2}$/
+const date = '2025-01-01'
+if(regExp.test(date)){
+	console.log('匹配成功')
+}else{
+	console.log('匹配失败')
+}
