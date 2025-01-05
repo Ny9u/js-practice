@@ -358,3 +358,31 @@ function getNextPrime(){
 		}
 	}
 }
+
+// 给数字增加分隔符
+/*
+这个也算是比较少见的,一般是实现思路是遍历,每三位加一个分隔符
+*/
+function addSeparator(num) {
+	let res = ''
+	let number = num.toString()
+	// let count = 1
+	let count = 0
+	for (let i = number.length-1; i >= 0; i--){
+		// if(count === 3){
+		// 	res = ',' + res
+		// 	res = number[i] + res
+		// 	count = 1
+		// }else {
+		// 	res = number[i] + res
+		// 	count++
+		// }
+		// 应该增加对最后一个数字的验证
+		res = number[i] + res
+		count++
+		if(i!==0 && count % 3 === 0){
+			res = ',' + res
+		}
+	}
+	return res
+}
