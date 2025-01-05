@@ -62,8 +62,9 @@ Function.prototype.call = function(context,...args){
 //手写reduce
 /*
 reduce的思路还是理解的,但是代码写出来结果差点意思
+不能用箭头函数实现
 */
-Array.prototype.reduce = (fn,value) => {
+Array.prototype.reduce = function (fn,value) {
     // if(!value){
     //     value = this[0];
     // }
