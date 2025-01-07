@@ -399,3 +399,35 @@ if(regExp.test(date)){
 }else{
 	console.log('匹配失败')
 }
+
+// 手写发布订阅模式
+/*
+发布订阅模式还是挺常考的,主要是实现三个函数:发布事件,订阅事件,取消订阅事件
+*/
+class eventCenter{
+	constructor(){
+		this.events = {}
+	}
+	//发布事件
+	emit(eventName,args) {
+		//执行事件回调
+		if(this.events[eventName]){
+			this.events[eventName].forEach(fn => {
+				fn(args)
+			})
+		}
+	}
+	//订阅事件
+	on(eventName,callback){
+		this.events[eventName] = this.events[eventName] || []
+		this.events[eventName].push(callback)
+	}
+	//取消订阅
+	off(eventName,callback){
+		this.events[eventName] = this.events[eventName] || []
+		let index = this.events[eventName].indexof(callback)
+		if(index !== -1){
+			this.events[eventName].splice(index,1)
+		}
+	}
+}
