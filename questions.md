@@ -86,4 +86,18 @@
 
 ### SPA是什么 (momenta二面)
 
-> SPA(Single  Page Application)是指单页面应用,是一种web应用架构模式,通过路由的方式去刷新页面内容,无需重新加载整个页面,缺点是首次加载时间长(加载所有的资源)且对搜索引擎优化不友好; vue,react都属于是SPA
+> SPA(Single Page Application)是指单页面应用,是一种web应用架构模式,通过路由的方式去刷新页面内容,无需重新加载整个页面,缺点是首次加载时间长(加载所有的资源)且对搜索引擎优化不友好; vue,react都属于是SPA
+
+### 为什么说defineproperty不能修改数组方法 (字节一面)
+
+> 因为数组的方法(如 push,pop,shift,splice 等)都是定义在其原型对象上的,其调用是通过原型链实现的,而defineproperty只能定义或修改对象自身的属性方法
+
+### ESM和CJS的区别 (影石一面)
+
+> 引入方式:ESM是静态导入,编译时导入, CJS是动态导入,代码运行时加载,可以在语句中动态导入
+>
+> 语法方面:ESM使用export和import , CJS使用module.export和require
+>
+> 加载模式:ESM是异步加载,CJS是同步加载(因为主要是用于服务端)
+>
+> 导出模式:ESM导出是的值的引用,而CJS导出的是值的拷贝;导出是对象时则两者都为引用
