@@ -431,3 +431,18 @@ class eventCenter{
 		}
 	}
 }
+
+// 手写once
+/*
+once函数是执行一次传入的函数,且在之后调用时不再生效,主要是依靠闭包实现
+可以加个附加需求,就是之后调用时返回第一次时的返回值
+*/
+function once(fn){
+	let res = undefined
+	return function(){
+		if(res) return res
+		const args = arguments
+		res = fn.apply(this,args)
+		return res
+	}
+}
