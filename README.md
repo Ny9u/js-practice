@@ -2,6 +2,12 @@
 
 ### 记录前端面试常考的手撕题和少见的面试题,不定时更新
 
+#### practice.js --- 手撕
+
+#### questions.md --- 面试题
+
+#### answerBetter --- 问题回答思路
+
 ## 不完全记录
 
 1. promise.all
