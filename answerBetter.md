@@ -12,3 +12,9 @@
 > 1. 对原型链概念的解释: 每个对象都有一个__proto__属性,指向另一个对象,这个对象就是其原型对象,而这个原型对象可以用同样的方式去继续访问,这样的一系列对象链接构成了原型链
 > 2. 原型链是如何构建的: 假设我们通过Person类创建了一个新对象,那么新对象的原型对象就会自动绑定为Person的prototype;而原型对象又可以是另一个对象的实例,这样就形成了多层继承的关系
 > 3. 原型链的作用: 实现属性和方法的共享,实现继承
+
+### 对promise的理解
+
+> 1. 对promise概念进行解释: promise是一种实现异步编程的方式,每一个promise对象表示一个异步操作的状态,promise对象有三种状态(pending,fulfilled,rejected),状态之间可以进行转换
+> 2. 对promise的特性进行说明:链式调用,then,catch返回一个新的promise
+> 3. 对promise的方法进行介绍: then(fulfilled时的回调),catch(rejected时的回调),finally(promise结束时的回调);还有一系列静态方法(all,race,allsetted)
