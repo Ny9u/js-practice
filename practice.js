@@ -240,7 +240,9 @@ String.prototype.trim = function(){
 sleep函数用来模拟代码延迟执行,一般用 promise和 setTimeout实现
 */ 
 function sleep(time) {
-	return new Promise(resolve => setTimeout(resolve,time))
+	return new Promise(resolve => {
+		setTimeout(resolve,time)
+	})
 }
 
 // 手写数组扁平化 (数组拍平)

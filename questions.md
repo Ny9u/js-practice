@@ -139,3 +139,15 @@
 ### qiankun的实现方式 (美团一面)
 
 > 首先在主应用中添加容器(基座)和配置路由,在容器通过registerMicroApps函数去注册子应用,start函数启动qiankun去监听路由变化,根据路由去激活不同的子应用,执行子应用的生命周期函数并进行挂载,从而实现了一个微前端的应用
+
+### 样式隔离的实现方案 (B站二面)
+
+> 1.CSS模块化 (借助webpack的loader实现)
+>
+> 2.影子DOM (使用attachShadow()函数去创建影子DOM,使用appendChild往影子DOM里面加入元素)
+>
+> 3.vue scoped
+>
+> 4.css in js
+>
+> 5.css 预处理器(scss,less)
