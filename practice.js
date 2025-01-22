@@ -448,3 +448,21 @@ function once(fn){
 		return res
 	}
 }
+
+// 手写柯里化
+/*
+柯里化的关键还是递归和闭包,通过闭包变量去记录当前参数个数,当参数个数达到要求之后才执行原函数
+*/
+function curry(fn){
+	let length = fn.length
+	let arr = []
+	return function _curry(...args){
+		let subArr = [...arr,...args]
+		args.push(...args)
+		if(subArr.length >= length){
+			return fn.apply(this,subArr)
+		}else {
+			return _curry
+		}
+	}
+}

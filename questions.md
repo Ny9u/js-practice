@@ -151,3 +151,19 @@
 > 4.css in js
 >
 > 5.css 预处理器(scss,less)
+
+### vue每个生命周期分别做了什么事情 (滴滴一面)
+
+> beforeCreate: 初始化一些全局变量和插件
+>
+> created: 初始化组件的数据data和方法methods后执行一些数据操作
+>
+> beforeMount:对模板进行最后的修改,之后将执行render函数编译模板
+>
+> mounted:将模板挂载到DOM树上后执行回调
+> beforeUpdated:获取旧的DOM状态,检查新的数据
+> updated:数据更新后执行回调
+>
+> beforeDestroy: 清除事件监听器,定时器等
+>
+> destroyed: 记录销毁实例日志
