@@ -466,3 +466,47 @@ function curry(fn){
 		}
 	}
 }
+
+// 手写链表倒置
+/*
+输入一个链表的头节点,返回倒置后链表的头节点
+数据结构:
+class ListNode {  
+	constructor(val, next = null) {
+		this.val = val;
+		this.next = next;
+	}
+}
+*/
+function reverseLinkedList(head) {
+	let nextNode = head.next
+	let ans = nextNode || head
+	if(nextNode) head.next = null
+	while(nextNode){
+		let tmp = nextNode.next
+		ans = nextNode
+		nextNode.next = head
+		head = nextNode
+		nextNode = tmp
+	}
+	return ans
+
+	// 以下是Ai写的版本,感觉逻辑更容易理解
+	// 初始化前一个节点为 null
+	let prev = null;
+	// 当前节点初始化为头节点
+	let current = head;
+	while (current) {
+			// 保存当前节点的下一个节点
+			let nextNode = current.next;
+			// 将当前节点的 next 指针指向前一个节点
+			current.next = prev;
+			// 更新前一个节点为当前节点
+			prev = current;
+			// 更新当前节点为下一个节点
+			current = nextNode;
+	}
+	// 循环结束后，prev 就是反转后链表的头节点
+	return prev;
+}
+
