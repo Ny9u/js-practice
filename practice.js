@@ -510,3 +510,16 @@ function reverseLinkedList(head) {
 	return prev;
 }
 
+// 获取嵌套数组最大深度
+function getMaxDepth(arr) {
+	let maxDepth = 0;
+	if(!Array.isArray(arr)){
+		return 0;
+	}
+	for(let i=0;i<arr.length;i++){
+		if(Array.isArray(arr[i])){
+			maxDepth = Math.max(maxDepth,getMaxDepth(arr[i]) + 1)
+		}
+	}
+	return maxDepth;
+}
