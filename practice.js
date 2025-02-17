@@ -523,3 +523,22 @@ function getMaxDepth(arr) {
 	}
 	return maxDepth;
 }
+
+// 手写promise链式调用
+let promise = new Promise((resolve,reject) => {
+	// 执行异步操作
+	if(true) {
+		// 执行成功
+		resolve('success')
+	}else {
+		// 执行失败
+		reject('error')
+	}
+}).then((data1)=>{
+	console.log(data1)
+	return 'data2' // 返回一个已解决的promise
+},(err1)=>{
+	console.log(err1)
+}).then((data2)=>{
+	console.log(data2)
+})
