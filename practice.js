@@ -542,3 +542,203 @@ let promise = new Promise((resolve,reject) => {
 }).then((data2)=>{
 	console.log(data2)
 })
+
+// 手写深拷贝
+/*
+要求: 支持对象,数组,基本数据类型的深拷贝
+*/
+function deepClone(obj) {
+	let res = null;
+	if(typeof obj !== 'object'){
+		res = obj
+		return res;
+	}
+	res = Array.isArray(obj) ? [] : {}
+	for(key in obj){
+		if(obj.hasOwnProperty(key)){
+			if(typeof obj[key] !== 'object'){
+				res[key] = obj[key]
+			}else {
+				res[key] = deepClone(obj[key])
+			}
+		}
+	}
+	return res;
+}
+
+// 实现一个promise.all
+/*
+要求: 模拟Promise.all的功能，接收一个Promise数组，返回一个新的Promise
+*/
+Promise.prototype.all = function (arr) {
+	let res = []
+	if(arr.length === 0) return res
+	return new Promise((resolve,reject)=>{
+		res = Array(arr.length)
+		const addResult = function (result,index) {
+			res[index] = result
+			if(index === arr.length -1) resolve(res);
+		}
+		for(let i=0;i<arr.length;i++){
+			if(arr[i] instanceof Promise){
+				arr[i].then((res)=>{
+					addResult(res,i)
+				})
+			}else{
+				addResult(arr[i],i)
+			}
+		}
+	})
+}
+
+// 实现一个防抖函数
+/*
+要求:防抖函数debounce，在指定时间内只执行一次
+*/
+function debounce(fn,time){
+	let timer = null;
+	return function() {
+		const context = this
+		const args = arguments
+		if(timer){
+			clearTimeout(timer)
+			timer = null
+		}
+		timer = setTimeout(()=>{
+			fn.apply(context,args)
+		},time)
+	}
+}
+
+// 实现vue的双向数据绑定
+/*
+const vm = new Vue({
+  data: { message: 'Hello' },
+  el: '#app'
+});
+要求:当修改 vm.message 时，视图自动更新
+*/
+Object.defineProperty(vm, 'message',{
+	get(){
+		return vm.data.message
+	},
+	set(newVal){
+		if(newVal === vm.data.message) return
+		vm.data.message = newVal
+		// 触发dom更新
+	}
+})
+
+// 实现vue的组件间通信
+/*
+要求：父组件向子组件传递数据，子组件向父组件触发事件
+*/
+/*
+思路描述: 父组件中使用'@'绑定自定义事件,并在父组件中定义响应函数,子组件中使用$emit发送信号
+*/
+
+// 实现函数柯里化
+/*
+实现代码，满足：
+ add(1)(2)() => 3
+ add(1)(2)(3)() => 6
+*/
+function makeAdd(){
+	let sum = 0;
+	return function add(){
+		const num = arguments
+		if (arguments.length !== 0) {
+			sum = sum + arguments[0]
+			return add
+		}else {
+			return sum
+		}
+	}
+}
+
+// 实现instanceof 
+function myInstanceof(obj, parent) {
+	const prototype = parent.prototype;
+	let proto = Object.getPrototypeOf(obj)
+	while(proto){
+		if(proto === prototype){
+			return true
+		}else{
+			proto = Object.getPrototypeOf(proto)
+		}
+	}
+	return false
+}
+
+// 实现数组扁平化
+/*
+要求:实现 flattenDeep([1, [2, [3]]]) => [1,2,3]
+*/
+function flattenDeep(arr) {
+  if(arr.length === 0) return;
+	let res = []
+	arr.forEach((item)=>{
+		if(Array.isArray(item)){
+			// 数组拼接用concat
+			res.concat(flattenDeep(item))
+		}else {
+			res.push(item)
+		}
+	})
+	return res
+}
+
+// 实现节流
+function throttle(fn, interval) {
+	let time = null;
+	return function(){
+		let now = new Date()
+		if(!time || now-time>interval){
+			fn.apply(this,arguments)
+			time = now
+		}
+	}
+}
+
+// 实现发布订阅模式
+class EventEmitter {
+  constructor() {
+		this.events = {}
+  }
+
+  on(event, callback) {
+		if(this.events[event]){
+			return
+		}else {
+			this.events[event] = callback
+		}
+	}
+
+  emit(event, ...args) {
+		if(this.events[event]){
+			this.events[event](...args)
+		}
+	}
+
+  off(event, callback) {
+		if(this.events[event]){
+			delete this.events[event]
+		}
+	}
+}
+
+// 实现bind 
+Function.prototype.bind = function(context,...args){
+	// const fn = this
+	// return function(){
+	// 	fn.apply(context,args)
+	// }
+	const self = this;
+  return function(...innerArgs) {
+    return self.apply(
+			// 这里判断是为了内部函数作为构造函数被new时this可以正确指向新对象
+      this instanceof self ? this : context,
+      args.concat(innerArgs)
+    );
+  };
+}
