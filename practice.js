@@ -742,3 +742,115 @@ Function.prototype.bind = function(context,...args){
     );
   };
 }
+
+// 手写call 
+Function.prototype.call = function(context,...args){
+	context = context || window
+	context.fn = this
+	const result = context.fn(...args)
+	delete context.fn
+	return result
+}
+
+// 手写apply
+Function.prototype.apply = function(context,args){
+	context = context || window
+	context.fn = this
+	const result = context.fn(args)
+	delete context.fn
+	return result
+}
+
+// 数组去重(多种方法)
+function unique1(arr){
+	// from将类数组对象/可迭代对象转为数组
+	return Array.from(new Set(arr))
+}
+
+function unique2(arr){
+	return Array.filter((item,index,arr) =>{
+		return arr.indexOf(item) === index
+	})
+}
+
+function unique3(arr){
+	arr.reduce((arr,cur) =>{
+		acc.includes(cur) ? acc : [...acc, cur]
+	},[])
+}
+
+function unique4(arr){
+	const map = new Map()
+	let res = []
+	arr.forEach((item)=>{
+		if(!map.has(item)){
+			map.set(item,true)
+			res.push(item)
+		}
+	})
+	return res
+}
+
+// 实现深拷贝
+/*
+要求:支持对象,数组,循环引用的深拷贝
+*/
+function deepClone (obj , map = new Map()){
+	if(obj === null || typeof obj !== 'object') return obj
+	if(map.has(obj)) return map.get(obj)
+	let res = Array.isArray(obj) ? [] : {}
+	map.set(obj, res);
+	for(let key in obj){
+		if(obj.hasOwnProperty(key)){
+			if(typeof obj[key] === 'object'){
+				res[key] = deepClone(obj[key],map)
+			}else {
+				res[key] = obj[key]
+			}
+		}
+	}
+	return res
+}
+
+// 实现函数柯里化
+/*
+实现代码，满足：
+ add(1)(2) => 3
+ add(1)(2)(3) => 6
+*/
+function curry(fn,...args){
+	// 这种柯里化首先要获取的就是总的参数长度
+	let length = fn.length
+	let arg = args || []
+	return function (){
+		//然后在内部函数判断是否超过总参数长度,超过则执行原函数,否则继续柯里化
+		let newArg = arg.concat(Array.from(arguments))
+		if(newArg.length >= length){
+			return fn.apply(this,newArg)
+		}else{
+			// 调用call,这样newArg就能同步到arg
+			return curry.call(this,fn,...newArg)
+		}
+	}
+}
+
+// 手写new
+Function.prototype.New = function (...args){
+	let obj = {}
+	obj.__proto__ = this.prototype
+	const res = this.apply(obj,args)
+	return Object(res)? res : obj
+}
+
+// 手写数字千分位格式化
+function format(num){
+	const str = num.toString()
+	let res = ''
+	for(let i = str.length-1;i>=0;i--){
+		res = res + str[i]
+		if(((str.length-i))%3 === 0 && i!==0){
+			res = res + ','
+		}
+	}
+	return res.split('').reverse().join('');
+}
