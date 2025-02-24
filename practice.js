@@ -854,3 +854,62 @@ function format(num){
 	}
 	return res.split('').reverse().join('');
 }
+
+// 带并发限制的异步调度器
+class Worker {
+	constructor(limit){
+		this.limit = limit 
+		this.task = []
+		this.num = 0
+	}
+
+	add(fn){
+		this.task.push(fn)
+	}
+
+	async run(){
+		if(this.num >= this.limit || this.task.length <= 0) return
+		this.num++
+		const fn = this.task.shift()
+		let res;
+		try{
+			res = await fn()
+		}catch{
+			//报错处理
+		}finally{
+			this.num--
+		}
+		return res
+	}
+}
+
+// 观察者模式实现event类
+class Event {
+	constructor(){
+		this.events = {}
+	}
+
+	emit(event){
+		if(this.events[event]){
+			this.events[event].forEach(fn => {
+				fn()
+			})
+		}
+	}
+
+	on(event,fn){
+		if(!this.events[event]){
+			this.events[event] = []
+		}
+		this.events[event].push(fn)
+	}
+
+	off(event,fn){
+		if(!this.events[event]) return
+		const index = this.events[event].indexOf(fn)
+		if(index !== -1){
+			this.events[event].splice(index,1)
+		}
+	}
+
+}
