@@ -913,3 +913,27 @@ class Event {
 	}
 
 }
+
+// 深拷贝(字节日常一面)
+function deepClone(obj,map = new Map()){
+	let res = null 
+	if(obj === null || typeof obj !== 'object') {
+		res = obj
+		return res
+	}
+	if(map.has(obj)){
+		return map.get(obj)
+	}
+	res = Array.isArray(obj)? [] : {}
+	map.set(obj,res)
+	for(let key in obj){
+		if(obj.hasOwnPerperty(key)){
+			if(typeof obj[key] === 'object'){
+				res[key] = deepClone(obj[key],map)
+			}else{
+				res[key] = obj[key]
+			}
+		}
+	}
+	return res
+}
