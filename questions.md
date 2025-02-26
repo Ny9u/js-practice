@@ -160,7 +160,7 @@
 >
 > beforeMount:对模板进行最后的修改,之后将执行render函数编译模板
 >
-> mounted:将模板挂载到DOM树上后执行回调
+> mounted:将模板挂载到DOM树上后执行回调,适合进行DOM操作和网络请求
 > beforeUpdated:获取旧的DOM状态,检查新的数据
 > updated:数据更新后执行回调
 >
