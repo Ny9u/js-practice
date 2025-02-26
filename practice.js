@@ -958,3 +958,38 @@ Promise.prototype.all = function(arr){
 		})
 	})
 }
+
+// 实现带once的发布订阅模式(字节一面)
+class EventEmitter {
+	constructor(){
+		this.events = {}
+	}
+
+	on(event,fn){
+		if(!this.events[event]){
+			this.events[event] = []
+		}
+		this.events[event].push(fn)
+	}
+
+	off(event,fn){
+		if(!this.events[event]) return
+		const index = this.events[event].indexOf(fn)
+		this.events[event].splice(index,1)
+	}
+
+	emit(event,args){
+		if(!this.events[event]) return
+		this.events[event].forEach(fn => {
+			fn(args)
+		})
+	}
+	once(event,fn){
+		const onceFn = (...args) => {
+			//在注册的事件中取消该回调
+			fn(...args)
+			this.off(event,onceFn)
+		}
+		this.on(event,onceFn)
+	}
+}
