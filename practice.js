@@ -937,3 +937,24 @@ function deepClone(obj,map = new Map()){
 	}
 	return res
 }
+
+// 手写promise.all(字节二面)
+Promise.prototype.all = function(arr){
+	let ans = []
+	if(arr.length === 0)return ans
+	return new Promise((resolve,reject)=>{
+		ans = Array(arr.length)
+		arr.forEach((item,index)=>{
+			if(item instanceof Promise){
+				item.then((res)=>{
+					ans[index] = res
+				},(err)=>{
+					reject(err)
+				})
+			}else{
+				ans[index] = item
+			}
+			if(index === arr.length -1) resolve(ans)
+		})
+	})
+}
