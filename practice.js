@@ -993,3 +993,85 @@ class EventEmitter {
 		this.on(event,onceFn)
 	}
 }
+
+// 手写列表转树形结构
+// array = [{id:1,name:'名字1',parent:2}...]
+function toTree(arr, parentId){
+	let tree = []
+	arr.forEach(item =>{
+		if(item.parent === parentId){
+			let obj = {
+				id: item.id,
+				name: item.name,
+				children: toTree(arr,item.id)
+			}
+			tree.push(obj)
+		}
+	})
+	return tree
+}
+
+// 手写对象的深比较
+function isEqual(obj1,obj2){
+	if (obj1 === null || obj2 === null || obj1 === undefined || obj2 === undefined) {
+		return obj1 === obj2;
+}
+	if(typeof obj1 !== 'object'){
+		return obj1 === obj2
+	}else{
+		for(key in obj1){
+			if(obj1.hasOwnProperty(key)){
+				if(isEqual(obj1[key],obj2[key]) === false || obj2.hasOwnPerperty(key) === false){
+					return false
+				}
+			}
+		}
+	}
+	return true
+}
+
+// promise.race
+Promise.prototype.race = function(promises){
+	return new Promise((resolve,reject)=>{
+		promises.forEach((promise)=>{
+			if(promise instanceof Promise){
+				promise.then((res)=>{
+					resolve(res)
+				},(err)=>{
+					reject(err)
+				})
+			}else{
+				resolve(promise)
+			}
+		})		
+	})
+}
+
+// 手撕 Promise 异步并发限制数量的图片上传(百度一面)
+function asyncPool(pics,uploadFn,limit){
+	let res = []
+	let isRunning = 0
+	let index = 0
+
+	return new Promise((resolve,reject)=>{
+		function uploadPic(){
+			if(isRunning === 0 && index>= pics.length){
+				resolve(res)
+				return
+			}
+			if(isRunning < limit && index < pics.length){
+				let pic = pics[index++]
+				isRunning++
+				uploadFn(pic).then((data)=>{
+					res.push(data)
+				}).catch((err)=>{
+					reject(err)
+				}).finally(()=>{
+					isRunning--
+					uploadPic()
+				})
+			}
+		}
+		uploadPic()
+	})
+}
