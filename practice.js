@@ -1075,3 +1075,26 @@ function asyncPool(pics,uploadFn,limit){
 		uploadPic()
 	})
 }
+
+// 手写深拷贝(网易一面)
+function deepClone(obj,map= new Map()){
+	let res;
+	if(typeof obj !== 'object'){
+		res = obj
+		return res
+	}
+	if(map.has(obj)){
+		return map.get(obj)
+	}
+	map.set(obj,res)
+	for(let key in obj){
+		if(obj.hasOwnProperty(key)){
+			if(typeof obj[key]=== 'object'){
+				res[key] = deepClone(obj[key],map)
+			}else{
+				res[key] = obj[key]
+			}
+		}
+	}
+	return res
+}
