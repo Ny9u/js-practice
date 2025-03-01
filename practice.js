@@ -1188,3 +1188,30 @@ Function.prototype.apply = function(context,args){
 	delete context.fn
 	return res
 }
+
+// 实现一个LRU(最近最少使用)类(小红书二面)
+class LRU{
+	constructor(capacity){
+		this.capacity = capacity
+		this.cache = new Map()
+	}
+
+	get(key){
+		if(this.cache.has(key)){
+			let value = this.cache.get(key)
+			this.cache.delete(key)
+			this.cache.set(key,value)
+			return value
+		}
+	}
+
+	put(key,value){
+		if(this.cache.has(key)){
+			this.cache.delete(key)
+		}else if(this.cache.size >= this.capacity){
+			//删除最近最少使用的元素
+			this.cache.delete(this.cache.keys().next().value)
+		}
+		this.cache.set(key,value)
+	}
+}
