@@ -1169,3 +1169,22 @@ function addSum(arr){
 		return acc += cur
 	},0)
 }
+
+// 求两个数组的公共部分
+function commonArray(arr1,arr2){
+	let res = []
+	arr1.forEach((item)=>{
+		if(arr2.includes(item)){
+			res.push(item)
+		}
+	})
+}
+
+// 手写apply(虾皮一面)
+Function.prototype.apply = function(context,args){
+	context = context || window
+	context.fn = this
+	const res = context.fn(...args)
+	delete context.fn
+	return res
+}
