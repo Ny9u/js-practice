@@ -1111,3 +1111,15 @@ function debounce(fn,delay){
 		},delay)
 	}
 }
+
+// 提取URL参数
+// "https://example.com/page?name=JohnDoe&age=25&city=New+York"
+function getUrlParams(url){
+	let res = {}
+	const params = url.split('?')[1].split('&')
+	params.forEach((param)=>{
+		let args = param.split('=')
+		res[args[0]] = args[1]
+	})
+	return res
+}
