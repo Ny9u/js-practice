@@ -1162,3 +1162,10 @@ function addComma(num){
 	// 也可以用正则结合replace实现
 	// /(\d)(?=(\d{3})+(?!\d))/g
 }
+
+// 数组reduce实现累加(小红书一面)
+function addSum(arr){
+	return arr.reduce((acc,cur)=>{
+		return acc += cur
+	},0)
+}
