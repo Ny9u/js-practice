@@ -1098,3 +1098,16 @@ function deepClone(obj,map= new Map()){
 	}
 	return res
 }
+
+// 手写防抖(哈啰一面)
+function debounce(fn,delay){
+	let timer = null
+	return function(){
+		if(timer){
+			clearTimeout(timer)
+		}
+		timer = setTimeout(()=>{
+			fn.apply(this,arguments)
+		},delay)
+	}
+}
