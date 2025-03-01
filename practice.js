@@ -1123,3 +1123,25 @@ function getUrlParams(url){
 	})
 	return res
 }
+
+// 手写promise.all(蔚来一面)
+promise.prototype.all = function(promises){
+	let res = []
+	return new Promise((resolve,reject)=>{
+		promises.forEach((promise,index)=>{
+			if(promise instanceof Promise){
+				promise.then((res)=>{
+					res.push(res)
+				},(err)=>{
+					reject(err)
+				})
+			}else{
+				res.push(promise)
+			}
+			if(index === promises.length){
+				resolve(res)
+			}
+		})
+
+	})
+}
