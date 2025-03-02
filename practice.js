@@ -1215,3 +1215,18 @@ class LRU{
 		this.cache.set(key,value)
 	}
 }
+
+// 输出多级嵌套结构的 Object 的所有 key 值
+function getKeys(obj){
+	let res = []
+	for(let key in obj){
+		if(obj.hasOwnProperty(key)){
+			if(typeof obj[key] === 'object'){
+				res= res.concat(getKeys(obj[key]))
+			}else{
+				res.push(key)
+			}
+		}
+	}
+	return res
+}
