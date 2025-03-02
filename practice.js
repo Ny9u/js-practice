@@ -1230,3 +1230,16 @@ function getKeys(obj){
 	}
 	return res
 }
+
+// 数组扁平化(腾讯一面)
+function flat(arr){
+	let res = []
+	arr.forEach((item)=>{
+		if(Array.isArray(item)){
+			res = res.concat(flat(item))
+		}else{
+			res.push(item)
+		}
+	})
+	return res
+}
