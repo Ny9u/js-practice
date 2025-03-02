@@ -1243,3 +1243,12 @@ function flat(arr){
 	})
 	return res
 }
+
+// 用promise实现sleep(腾讯一面)
+function sleep(time){
+	return new Promise((resolve,reject)=>{
+		setTimeout(()=>{
+			resolve()
+		},time)
+	})
+}
