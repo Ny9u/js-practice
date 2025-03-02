@@ -1252,3 +1252,20 @@ function sleep(time){
 		},time)
 	})
 }
+
+// 实现lodash_get(虾皮一面)
+/*
+lodash_get函数是通过传入的路径获取值,处理访问对象的属性时可能会出现undefined的情况
+*/
+function myGet(obj,path,defaultVal){
+	let pathArr = path.split('.')
+	for(let i=0;i<pathArr.length;i++){
+		const key = pathArr[i]
+		if(obj){
+			obj = obj[key]
+		}else{
+			return defaultVal
+		}
+	}
+	return obj === 'undefined' ? defaultVal : obj
+}
