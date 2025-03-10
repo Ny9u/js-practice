@@ -1287,3 +1287,21 @@ function debounce(fn,delay){
 		},delay)
 	}
 }
+
+// lodash.get(腾讯一面)
+/*
+给一个字符串，例如a.b.c a[0].b.c 用这个字符串去访问这个对象 如果能正确访问就返回取到的值 否则就返回自己设置的默认值
+*/
+
+function myGet(obj,str,defaultValue){
+	let strArr = str.split('.')
+	for(let i=0;i<strArr.length;i++){
+		let key = strArr[i]
+		if(obj[key]){
+			obj = obj[key]
+		}else{
+			return defaultValue
+		}
+	}
+	return obj === 'undefined' ? defaultValue : obj
+} 
