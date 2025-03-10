@@ -1331,3 +1331,31 @@ function treeify(arr,parentId=null){
 	})
 	return ans
 }
+
+// promise限制最大并发数(腾讯一面)
+function asyncPool(promises,limit){
+	let res=[]
+	let isRunning = 0
+	let index = 0
+	return new Promise((resolve,reject)=>{
+		function fn(){
+			if(isRunning === 0 && index >= promises.length){
+				resolve(res)
+				return
+			}
+			if(isRunning<limit && index < promises.length){
+				let promise = promises[index++]
+				isRunning++
+				promise.then((data)=>{
+					res.push(data)
+				},(err)=>{
+					reject(err)
+				}).finally(()=>{
+					isRunning--
+					fn
+				})
+			}
+		}
+		fn()
+	})
+}
