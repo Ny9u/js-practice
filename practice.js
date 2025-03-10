@@ -1305,3 +1305,29 @@ function myGet(obj,str,defaultValue){
 	}
 	return obj === 'undefined' ? defaultValue : obj
 } 
+
+// 数组树型化(虾皮一面)
+/*
+data = [
+ {id: 1, pid: null, name: '中国'},
+ {id: 2, pid: 1, name: '广东省'},
+ {id: 3, pid: 1, name: '四川省'},
+ {id: 5, pid: 2, name: '深圳市'},
+ {id: 4, pid: 2, name: '中山市'},
+ {id: 8, pid: 1, name: '湖北省'},
+]
+*/
+function treeify(arr,parentId=null){
+	let ans= []
+	arr.forEach((item)=>{
+		if(item.pid === parentId){
+			const obj={
+				id:item.id,
+				name:item.name,
+				children:treeify(arr,item.id)
+			}
+			ans.push(obj)
+		}
+	})
+	return ans
+}
