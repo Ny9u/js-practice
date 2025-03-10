@@ -1269,3 +1269,8 @@ function myGet(obj,path,defaultVal){
 	}
 	return obj === 'undefined' ? defaultVal : obj
 }
+
+// 反转字符串(滴滴一面)
+function reverseString(str){
+	str.split('').reverse().join('')
+}
