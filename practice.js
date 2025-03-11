@@ -1359,3 +1359,22 @@ function asyncPool(promises,limit){
 		fn()
 	})
 }
+
+// 二分查找(字节一面)
+function binarySearch(arr,target){
+	let left = 0
+	let right = arr.length-1
+	// 根据数组性质进行排序
+	// arr.sort() 
+	while(left<right){
+		let index = (right-left)>>1
+		if(arr[index] === target){
+			return index
+		}else if(arr[index]>target){
+			right = index-1
+		}else if(arr[index]<target){
+			left = index+1
+		}
+	}
+	return -1
+}
