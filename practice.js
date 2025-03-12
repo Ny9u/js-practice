@@ -1378,3 +1378,150 @@ function binarySearch(arr,target){
 	}
 	return -1
 }
+
+// 防抖
+function debounce(fn,delay){
+	let timer = null
+	return function(){
+		if(timer){
+			clearTimeout(timer)
+		}
+		timer = setTimeout(()=>{
+			fn.apply(this,arguments)
+		},delay)
+	}
+}
+
+// 节流
+function throttle(fn,time){
+	let lastTime = null
+	return function(){
+		let now = new Date()
+		if(!lastTime ||now -time>=lastTime){
+			fn.apply(this,arguments)
+			lastTime = now
+		}	
+	}
+}
+
+// 深拷贝
+function deepClone(obj,map = new Map()){
+	let ans = null
+	if(typeof obj !== 'object'){
+		ans = obj
+		return ans
+	}
+	if(map.get(obj)){
+		return map.get(obj)
+	}
+	ans = Array.isArray(obj)? [] : {}
+	for(let key in obj){
+		if(obj.hasOwnProperty(key)){
+			if(typeof obj[key] === 'object'){
+				ans[key] = deepClone(obj[key],map)
+			}else{
+				ans[key] = obj[key]
+			}
+		}
+	}
+	map.set(obj,ans)
+	return ans
+}
+
+// 获取对应节点中的所有子节点
+/*
+const obj = {
+	id:1,
+	child:[
+		{
+			id:2,
+			child:[
+				{
+					id:3,
+					child:[...]
+				}
+			]
+		}
+	]
+}
+*/
+function getChilds(arr){
+	let res = []
+	for(let i=0;i<arr.length;i++){
+		res.push(arr[i].id)
+		if(arr[i].child){
+			res = res.concat(getChilds(arr[i].child))
+		}
+	}
+	return res
+}
+
+function fn(obj,id){
+	for(let key in obj){
+		if(obj[key] === id){
+			return getChilds(obj.child)
+		}else if(typeof obj[key] === 'object'){
+			return fn(obj[key],id)
+		}
+	}
+}
+
+// 求出数组的所有子集
+function getChildArray(arr){
+	let res = [[]]
+	for(let i=0;i<arr.length;i++){
+		let newChildArr = res.map((a)=>[...a,arr[i]]) //往res每一个子集中加入arr[i]
+		res = [...res,...newChildArr]
+	}
+	return res
+}
+
+// 发布订阅模式
+class EventEmitter{
+	constructor(){
+		this.events = {}
+	}
+
+	emit(event,args){
+		if(this.events[event]){
+			this.events[event].forEach(fn => {
+				fn(args)
+			})
+		}
+	}
+
+	on(event,fn){
+		if(!this.events[event]){
+			this.events[event] = []
+		}
+		this.events[event].push(fn)
+	}
+
+	off(event,fn){
+		if(!this.events[event]) return
+		let index = this.events[event].indexOf(fn)
+		this.events[event].splice(index,1)
+	}
+}
+
+// 手写flat
+function flat(arr){
+	let res = []
+	arr.forEach((item)=>{
+		if(Array.isArray(item)){
+			res = res.concat(flat(item))
+		}else{
+			res.push(item)
+		}
+	})
+	return res
+}
+
+//字符串中每个字符出现的字数
+function getStrCount(str){
+	let res = new Map()
+	for(let i=0;i<str.length;i++){
+		res.set(str[i],res.has(str[i])? res.get(str[i])+1 : 1)
+	}
+	return res
+}
