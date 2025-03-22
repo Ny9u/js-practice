@@ -1525,3 +1525,76 @@ function getStrCount(str){
 	}
 	return res
 }
+
+/*判断有效括号
+
+给定一个只包括 `'('` ，`')'` ，`'{'` ，`'}'` ，`'['` ，`']'` 的字符串，判断字符串是否有效。
+
+有效字符串需满足：
+
+- 左括号必须用相同类型的右括号闭合。
+- 左括号必须以正确的顺序闭合。
+
+注意空字符串可被认为是有效字符串。*/
+//输入: "()"
+//输出: true
+
+function fn(str){
+	let arr = []
+	for(let i=0;i<str.length;i++){
+		let topValue = arr.length>0 ? arr[arr.length-1]: null
+		if(str[i]==='(' || str[i]==='{' || str[i]==='[' || topValue === null){
+			arr.push(str[i])
+		}else {
+			if(arr.length===0)return false
+			if(str[i]===')'){
+				if(topValue !== '(')return false
+				arr.pop()
+			}
+			if(str[i]==='}'){
+				if(topValue !== '{')return false
+				arr.pop()
+			}
+			if(str[i]===']'){
+				if(topValue !== '[')return false
+				arr.pop()
+			}
+		}
+	}
+	return true
+}
+
+// vnode转化为html(腾讯一面)
+/*
+const vnode = {
+  tag: 'div',
+  props: {
+    id: 'container',
+    class: 'wrapper',
+  },
+  children: [
+    { tag: 'h1', props: {}, children: [{ text: 'Hello, World!' }] },
+    { tag: 'p', props: { style: 'color: red;' }, children: [{ text: 'This is a paragraph.' }] },
+  ],
+};
+*/
+function vnodeToHtml(vnode){
+	if(vnode.text){
+		return vnode.text
+	}
+	let html = `<${vnode.tag}`
+	if(vnode.props){
+		for(let key in vnode.props){
+			if(vnode.props.hasOwnProperty(key)){
+				html += ` ${key}="${vnode.props[key]}"`
+			}
+		}
+	}
+	if(vnode.children){
+		for(let child of vnode.children){
+			html += vnodeToHtml(child)
+		}
+	}
+	html += `${vnode.tag}>`
+	return html
+}
