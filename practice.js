@@ -1631,3 +1631,16 @@ function fn(promises,limit){
 		run()
 	})
 }
+
+// 防抖(小红书一面)
+function debounce(fn,delay){
+	let timer = null
+	return function(){
+		if(timer){
+			clearTimeout(timer)
+		}
+		timer = setTimeout(()=>{
+			fn.apply(this,arguments)
+		},delay)
+	}
+}
