@@ -1598,3 +1598,36 @@ function vnodeToHtml(vnode){
 	html += `${vnode.tag}>`
 	return html
 }
+
+// 实现并发控制的promise,实现100个请求,一次执行10个(小红书一面)
+function fn(promises,limit){
+	let res = []
+	let pendingList = []
+	let isPending = 0
+	let index = 0
+	return new Promise((resolve,reject)=>{
+		function run(){
+			if(index >= promises.length){
+				promise.allSettled(pendingList).then((data)=>{
+					res.concat(data)
+					resolve(res)
+				})
+				return
+			}
+			while(isPending<limit && index<promises.length){
+				pendingList.push(promises[index])
+				isPending++
+				index++
+			}
+			if(pendingList.length === limit){
+				Promise.allSettled(pendingList).then((data)=>{
+					res = res.concat(data)
+					isPending=0
+					pendingList = []
+					run()
+				})	
+			}		
+		}
+		run()
+	})
+}
