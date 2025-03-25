@@ -1644,3 +1644,19 @@ function debounce(fn,delay){
 		},delay)
 	}
 }
+
+// 数字逆序输出，用%和/实现(小红书一面)
+function reverseNumber(num){
+	let reverseNum = 0
+	let isNegative = false
+	if(num<0){
+		num = -num
+		isNegative = true
+	}
+	while(num>0){
+		const lastNum = num % 10
+		num = Math.floor(num / 10)
+		reverseNum = reverseNum * 10 + lastNum
+	}
+	return isNegative === false ? reverseNum: -reverseNum
+}
