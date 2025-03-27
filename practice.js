@@ -1660,3 +1660,19 @@ function reverseNumber(num){
 	}
 	return isNegative === false ? reverseNum: -reverseNum
 }
+
+// 快速排序
+function quickSort(arr){
+	if(arr.length<=1)return arr
+	let left = []
+	let right = []
+	let pivot = arr[0]
+	arr.forEach((item)=>{
+		if(item<pivot){
+			left.push(item)
+		}else if(item>pivot){
+			right.push(item)
+		}
+	})
+	return [...quickSort(left),pivot,...quickSort(right)]
+}
