@@ -1676,3 +1676,37 @@ function quickSort(arr){
 	})
 	return [...quickSort(left),pivot,...quickSort(right)]
 }
+
+// 对url参数进行解析(作业帮笔试)
+/*
+对url进行解析,提取其协议域名端口号参数锚点等,元素之间用逗号分隔,返回一个字符串
+*/
+function parseUrl(url){
+	let Url = new URL(url)
+	let res = ''
+	const protocol = Url.protocol|| ''; // 协议
+  const hostname = Url.hostname|| ''; // 域名
+  const port = Url.port || ''; // 端口号
+  const pathname = Url.pathname|| ''; // 路径
+  const searchParams = Url.search|| ''; // 查询参数
+  const hash = Url.hash|| ''; // 锚点
+	res = [protocol, hostname, port, pathname, searchParams, hash].join(',')
+	return res
+}
+
+// 实现颜色代码转换(作业帮笔试)
+/*
+如果颜色代码不足6位时会自动进行补全,#0A0 => #00AA00
+*/
+function colorToHex(color){
+	let code = color.slice(1)
+	if(code.length===3){
+		code = code.split('').map((item)=>item+item).join('')
+	}
+	// 十六进制转十进制
+	const a = parseInt(code.slice(0,2),16)
+	const b = parseInt(code.slice(2,4),16)
+	const c = parseInt(code.slice(4,6),16)
+
+	return `rgb(${a},${b},${c})`
+}
