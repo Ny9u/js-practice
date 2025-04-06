@@ -1710,3 +1710,151 @@ function colorToHex(color){
 
 	return `rgb(${a},${b},${c})`
 }
+
+// 快速排序
+function quickSort(arr){
+	if(arr.length<=1)return arr
+	let p = arr[0]
+	let left = []
+	let right = []
+	for(let i =1;i<arr.length;i++){
+		if(nums[i]<p){
+			left.push(nums[i])
+		}else{
+			right.push(nums[i])
+		}
+	}
+	return [...quickSort(left),p,...quickSort(right)]
+}
+
+// 节流(快手二面)
+function throttle(fn,delay){
+	let lastTime = null
+	return function(){
+		let cur = new Date()
+		if(cur-lastTime>delay || !lastTime){
+			fn.apply(this,arguments)
+			lastTime = cur
+		}
+	}
+}
+
+// vnode转为html(快手二面)
+/*const vnode = {
+  tag: 'div',
+  props: {
+    id: 'container',
+    class: 'wrapper',
+  },
+  children: [
+    { tag: 'h1', props: {}, children: [{ text: 'Hello, World!' }] },
+    { tag: 'p', props: { style: 'color: red;' }, children: [{ text: 'This is a paragraph.' }] },
+  ],
+};*/
+function vnodeToHtml(vnode){
+	if(vnode.text){
+		return vnode.text
+	}
+	let html = `<${vnode.tag}`
+	if(vnode.props){
+		for(let key in vnode.props){
+			if(vnode.props.hasOwnProperty(key)){
+				html += ` ${key}="${vnode.props[key]}"`
+			}
+		}
+	}
+	html += `>`
+	if(vnode.children){
+		for(let child of vnode.children){
+			html += vnodeToHtml(child)
+		}
+	}
+	html += `</${vnode.tag}>`
+	return html
+}
+
+// promise.all(快手一面)
+Promise.prototype.all = function(promises){
+	let ans = []
+	return new Promise((resolve,reject)=>{
+		promises.forEach((promise,index)=>{
+			if(promise instanceof Promise){
+				promise.then((res)=>{
+					ans[index] = res
+				},err=>{
+					reject(err)
+				})
+			}else{
+				ans[index] = promise
+			}
+			if(ans.length === promises.length){
+				resolve(ans)
+			}
+		})
+	})
+}
+
+// 快排(快手一面)
+function quickSort(arr){
+	let p = arr[0]
+	let left = []
+	let right = []
+	for(let i=1;i<arr.length;i++){
+		if(arr[i]<p){
+			left.push(arr[i])
+		}else{
+			right.push(arr[i])
+		}
+	}
+	return [...quickSort(left),p,...quickSort(right)]
+}
+
+// 发布订阅模式(快手一面)
+class EventEmiiter{
+	constructor(){
+		this.events = {}
+	}
+	 
+	on(event,fn){
+		if(!this.events[event]){
+			this.events[event] = []
+		}
+		this.events[event].push(fn)
+	}
+
+	off(event,fn){
+		if(this.events[event].indexOf(fn)>-1){
+			this.events[event].splice(this.events[event].indexOf(fn),1)
+		}
+	}
+
+	emit(event,args){
+		if(this.events[event]){
+			this.events[event].forEach(fn=>{
+				fn(args)
+			})
+		}
+	}
+}
+
+// 深拷贝(快手一面)
+function deepClone(obj,map = new Map()){
+	if(typeof obj !== 'object'){
+		return obj
+	}
+	if(map.has(obj)){
+		return map.get(obj)
+	}
+	let res = Array.isArray(obj)? [] : {}
+	for(let key in obj){
+		if(obj.hasOwnPerperty(key)){
+			if(typeof obj[key]!== 'object'){
+				res[key] = obj[key]
+			}else{
+				res[key] = deepClone(obj[key])
+			}
+		}
+	}
+	map.set(obj,res)
+	return res
+}
