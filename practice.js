@@ -1858,3 +1858,123 @@ function deepClone(obj,map = new Map()){
 	map.set(obj,res)
 	return res
 }
+
+// 限制最大并发数(腾讯音乐一面)
+class promiseController{
+	constructor(limit){
+		this.queue = []
+		this.limit = limit
+		this.isRunning = 0
+	}
+
+	add(fn){
+		this.queue.push(fn)
+	}
+	async run(){
+		if(this.isRunning >= this.limit || this.queue.length === 0) return
+		let promise = queue.shift()
+		this.isRunning++
+		const res = await promise()
+		this.isRunning--
+		return res
+	}
+}
+
+// 事件总线(腾讯音乐二面)
+class eventEmitter{
+	constructor(){
+		this.event = {}
+	}
+	on(eventName, fn){
+		if(!this.event[eventName]){
+			this.event[eventName] = []
+		}
+		this.event[eventName].push(fn)
+	}
+
+	off(eventName,fn){
+		if(!this.event[eventName])return
+		let index = this.event[eventName].indexOf(fn) 
+		if(index!== -1){
+			this.event[eventName].splice(index,1)
+		}
+	}
+
+	emit(eventName, args){
+		if(!this.event[eventName])return
+		this.event[eventName].forEach(fn=>{
+			fn(args)
+		})
+	}
+}
+
+// 解析url 
+function praseUrl(url){
+	let res = {}
+	let arr = url.split('?')[1]
+	if(arr){
+		params = arr.split('&')
+		params.forEach((param)=>{
+			param = param.split('=')
+			res[param[0]] = param[1]
+		})
+	}
+	return res
+}
+
+// 消除字符串中相同元素(美团二面)
+/*
+字符串'aabbcc'→''，'aevccvm'→'aem'
+*/
+function deleteSame(str){
+	let stack = []
+	let n = str.length
+	for(let i=0;i<n;i++){
+		let top = stack.length>0 ? stack[stack.length-1] : null
+		if(str[i] === top){
+			stack.pop()
+		}else{
+			stack.push(str[i])
+		}
+	}
+	if(stack.length===0)return ''
+	return stack.join('')
+}
+
+// 数组去重(美团一面)
+function unique(arr){
+	return arr.reduce((acc,cur)=>{
+		if(!acc.includes(cur)){
+			acc.push(cur)
+		}
+		return acc
+	},[])
+}
+
+// 链表去重(美团一面)
+function unique(head){
+	let map = new Map()
+	let dummy = new ListNode(0,head)
+	let cur = dummy
+	if(!head)return null
+	while(cur.next){
+		if(map.has(cur.next.val)){
+			cur.next=cur.next.next
+		}else{
+			map.set(cur.next.val,true)
+			cur = cur.next
+		}
+	}
+	return dummy.next
+}
+
+// 手写bind (b站一面)
+Function.prototype.bind = function(context,...args){
+	let self = this
+	return function(){
+		return self.apply(
+			this instanceof self ? this: context,
+			args.concat(arguments)
+		)
+	}
+}
