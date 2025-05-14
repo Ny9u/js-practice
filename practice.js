@@ -2110,3 +2110,314 @@ function usePrevious(count) {
     prev,
   };
 }
+
+// 发布订阅模式
+class EventEmitter {
+  constructor() {
+    this.Events = {};
+  }
+
+  add(event, fn) {
+    if (!Events[event]) {
+      Events[event] = [];
+    }
+    Events[event].push(fn);
+  }
+
+  emit(event, ...args) {
+    if (!Events[event]) return;
+    Events[event].forEach((fn) => {
+      fn(...args);
+    });
+  }
+
+  delete(event, fn) {
+    if (!Events[event]) return;
+    let index = Events[event].indexOf(fn);
+    if (index !== -1) {
+      Events[event].splice(index, 1);
+    }
+  }
+}
+
+// promise.all
+Promise.prototype.all = function (promises) {
+  let ans = [];
+  return new Promise((resolve, reject) => {
+    promises.forEach((promise, index) => {
+      if (promise instanceof Promise) {
+        promise.then(
+          (res) => {
+            ans.push(res);
+            if (ans.length === promises.length) {
+              resolve(ans);
+            }
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+      } else {
+        ans.push(res);
+        if (ans.length === promises.length) {
+          resolve(ans);
+        }
+      }
+    });
+  });
+};
+
+// 数组乱序输出
+function randomArr(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+// 实现一个有时间限制的异步任务
+function timeLimitFunc(fn, time) {
+  return new Promise((resolve, reject) => {
+    let timer = setTimeout(() => {
+      reject("超时");
+    }, time);
+    Promise.race([fn, timer]).then((res) => {
+      resolve(res);
+    });
+  });
+}
+
+// 实现一个并发控制器
+class Controller {
+  constructor(limit) {
+    this.limit = limit;
+    this.queue = []; // 任务队列
+    this.running = 0;
+  }
+
+  add(task) {
+    this.queue.push(task);
+  }
+
+  run() {
+    if (this.running >= this.limit || this.queue.length === 0) return;
+    const fn = this.queue.shift();
+    this.running++;
+    fn().then(
+      () => {
+        this.running--;
+      },
+      (err) => {
+        this.running--;
+        throw new Error(err);
+      }
+    );
+  }
+}
+
+// 手撕深拷贝
+function deepClone(obj, map = new Map()) {
+  if (obj === null || typeof obj !== "object" || typeof obj === "function") {
+    return obj;
+  }
+  if (map.has(obj)) {
+    return map.get(obj);
+  }
+  // 处理Date
+  if (obj instanceof Date) {
+    return new Date(obj);
+  }
+  // 处理map
+  if (obj instanceof Map) {
+    let newMap = new Map();
+    map.set(obj, newMap);
+    obj.forEach((value, key) => {
+      newMap.set(deepClone(key, map), deepClone(value, map));
+    });
+    return newMap;
+  }
+  // 处理set
+  if (obj instanceof Set) {
+    let newSet = new Set();
+    map.set(obj, newSet);
+    obj.forEach((value) => {
+      newSet.add(deepClone(value, map));
+    });
+    return newSet;
+  }
+  let a = Array.isArray(obj) ? [] : {};
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      a[key] =
+        typeof obj[key] === "object" ? deepClone(obj[key], map) : obj[key];
+    }
+  }
+  map.set(obj, a);
+  return a;
+}
+
+// 手撕URL解析
+function parseUrl(url) {
+  let params = url.split("?")[1].split("&");
+  let ans = {};
+  for (param of params) {
+    let a = param.split("=");
+    ans[a[0]] = a[1];
+  }
+  return ans;
+}
+
+// 手撕Object.create
+function myCreate(obj) {
+  function fn() {}
+  let newObj = new fn();
+  fn.prototype = obj;
+  newObj.__proto__ = obj;
+  return newObj;
+}
+
+// 手撕防抖
+function debounce(fn, delay) {
+  let timer = null;
+  return function () {
+    if (timer) {
+      timer = clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, arguments);
+    }, delay);
+  };
+}
+
+// 手撕节流
+function throttle(fn, wait) {
+  let lastTime = null;
+  return function () {
+    if (!lastTime || Date.now() - wait > lastTime) {
+      lastTime = Date.now();
+      fn.apply(this, arguments);
+    }
+  };
+}
+
+function curry(fn, ...args) {
+  let oldArg = [];
+  let n = args.length;
+  let func = fn;
+  return function _curry(...args) {
+    let newArg = args.concat(oldArg);
+    oldArg = newArg;
+    if (newArg.length >= n) {
+      func.apply(this, newArg);
+    } else {
+      return _curry;
+    }
+  };
+}
+
+async function async1() {
+  console.log("a");
+  await async2();
+  console.log("b");
+}
+
+async function async2() {
+  console.log("c");
+}
+
+console.log("d");
+async1();
+
+setTimeout(() => {
+  console.log("e");
+}, 0);
+
+new Promise((resolve, reject) => {
+  console.log("f");
+  resolve();
+}).then(() => {
+  console.log("g");
+});
+
+Object.defineProperty(name, {
+  getter() {
+    console.log(this.name);
+  },
+  setter(newVal, oldVal) {
+    this.name = newVal;
+    console.log(this.name);
+  },
+});
+
+const a = ["1.2.3", "1.2.4", "0.0.1", "0.1.0", "2.3.4.5"];
+// 1.2.4 1.24
+// 12.4 1.24
+// 0.1 0.1.0
+function versionNumberSort(a) {}
+
+function Foo() {
+  getName = function () {
+    alert(1);
+  };
+  return this;
+}
+
+Foo.getName = function () {
+  alert(2);
+};
+
+Foo.prototype.getName = function () {
+  alert(3);
+};
+
+var getName = function () {
+  alert(4);
+};
+
+function getName() {
+  alert(5);
+}
+
+Foo.getName();
+getName();
+Foo().getName();
+getName();
+new Foo.getName();
+new Foo().getName();
+new new Foo().getName();
+
+function sum(...args) {
+  let n = args.length;
+  let oldArg = [];
+  return function mySum(...args) {
+    let newArg = [].concat(args);
+    oldArg = newArg;
+    function sumOf() {
+      let a = newArg.reduce((arr, cur) => arr + cur);
+      return a;
+    }
+    return mySum;
+  };
+}
+
+const obj = sum(1, 2, 3, 4).sumOf();
+console.log(obj);
+
+//给定一个整数数组 a，其中1 ≤ a[i] ≤ n （n为数组长度）, 其中有些元素出现两次而其他元素出现一次。
+//找到所有出现两次的元素。
+
+function fn(arr) {
+  let n = arr.length;
+  let a = new Array(n + 1).fill(0);
+  let ans = [];
+  for (let i = 0; i < n; i++) {
+    let obj = arr[i];
+    a[obj]++;
+  }
+  a.forEach((item, index) => {
+    if (item === 2) {
+      ans.push(index);
+    }
+  });
+  return ans;
+}
