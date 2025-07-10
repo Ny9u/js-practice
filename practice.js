@@ -2478,3 +2478,30 @@ function formatNum(num) {
   }
   return res;
 }
+
+// 防抖
+function debounce(fn, delay) {
+  // 随时开启一个定时器,定时结束才触发函数,适用于搜索
+  let timer = null;
+  return function () {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, arguments);
+    }, delay);
+  };
+}
+
+// 节流
+function throttle(fn, wait) {
+  //执行完函数之后需要等待一段时间才能继续执行,通过记录上一次的执行时间决定
+  let lastTime = null;
+  return function () {
+    let now = Date.now();
+    if (!lastTime || now - lastTime > wait) {
+      fn.apply(this, arguments);
+      lastTime = now;
+    }
+  };
+}
