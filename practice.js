@@ -2421,3 +2421,60 @@ function fn(arr) {
   });
   return ans;
 }
+
+// 手写Object.create
+function myCreate(obj) {
+  function fn() {}
+  let newObj = new fn();
+  newObj.__proto__ = obj;
+  fn.prototype = obj;
+  return newObj;
+}
+
+function makeTree(arr, left, right) {
+  let n = arr.length;
+  let ans = [];
+  function build(arr, left, right) {
+    if (left > right) return;
+    let mid = left + Math.floor((right - left) / 2);
+    let root = arr[mid];
+    ans.push(root);
+    build(arr, left, mid - 1); //左节点
+    build(arr, mid + 1, right); //右节点
+  }
+  build(arr, 0, n - 1);
+  return ans;
+}
+
+// 二叉搜索树（BST）里找到第 K 大的值
+//利用二叉搜索树的特性,中序遍历可以获取一个升序的数组,我们翻过来即可
+function findTopK(root) {
+  let count = 0;
+  let ans = null;
+  function dfs(root) {
+    if (!root) return;
+    dfs(root.right);
+    count++;
+    if (count === k) {
+      ans = root.val;
+    }
+    dfs(root.left);
+  }
+  dfs(root);
+  return ans;
+}
+
+// 数字千分位
+function formatNum(num) {
+  let numStr = num.toString();
+  let n = numStr.length;
+  let res = "";
+  for (let i = 0; i < n; i++) {
+    if (i % 3 === 0 && i !== 0) {
+      res = numStr[n - i - 1] + "." + res;
+    } else {
+      res = numStr[n - i - 1] + res;
+    }
+  }
+  return res;
+}
