@@ -2505,3 +2505,128 @@ function throttle(fn, wait) {
     }
   };
 }
+
+// promise.all
+Promise.prototype.all = function (promises) {
+  return new Promise((resolve, reject) => {
+    let n = promises.length;
+    let ans = new Array(n);
+    function add(res, i) {
+      ans[i] = res;
+      if (i === n - 1) {
+        resolve(ans);
+      }
+    }
+    for (let i = 0; i < n; i++) {
+      if (promises[i] instanceof Promise) {
+        promises[i].then(
+          (res) => add(res, i),
+          (err) => reject(err)
+        );
+      } else {
+        add(promises[i], i);
+      }
+    }
+  });
+};
+
+// 防抖
+function debounce(fn, delay) {
+  let timer = null;
+  return function () {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, arguments);
+    }, delay);
+  };
+}
+
+// 深拷贝
+function deepClone(obj, map = new Map()) {
+  let ans = null;
+  if (typeof obj !== "object") {
+    ans = obj;
+    return ans;
+  }
+  // 避免循环引用
+  if (map.has(obj)) {
+    return map.get(obj);
+  }
+  if (obj instanceof Array) {
+    ans = [];
+    for (let i = 0; i < obj.length; i++) {
+      if (typeof obj[i] === "object") {
+        ans[i] = deepClone(obj[i], map);
+      } else {
+        ans[i] = obj[i];
+      }
+    }
+    map.set(obj, ans);
+    return ans;
+  }
+  if (obj instanceof Object) {
+    ans = {};
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (typeof obj[key] === "object") {
+          ans[key] = deepClone(obj[key], map);
+        } else {
+          ans[key] = obj[key];
+        }
+      }
+    }
+    map.set(obj, ans);
+    return ans;
+  }
+}
+
+// 蔚来一面
+// 实现一个函数search可以进行关键词搜索,返回出关键词出现的链路
+// 比如 search('西半') 返回 ['北京市', '朝阳区', '西半街道']
+// 比如 search('朝阳区') 返回 ['北京市', '朝阳区']
+// 比如 search('街道') 返回 ['北京市', '昌平区', '昌平街道']、 ['北京市', '朝阳区', '西半街道']
+// let testObj = {
+//     babel: '北京市',
+//     child: [
+//         {
+//             babel: '朝阳区',
+//             child: [
+//                 {
+//                     babel: '西半街道',
+//                 },
+//                 {
+//                     babel: '向上向善',
+//                 }
+//             ]
+//         },
+//         {
+//             babel: '昌平区',
+//             child: [
+//                 {
+//                     babel: '香水百合',
+//                 },
+//                 {
+//                     babel: '昌平街道',
+//                 }
+//             ]
+//         }
+//     ]
+// }
+function search(key) {
+  let ans = [];
+  function dfs(obj, path) {
+    if (!obj) return;
+    path.push(obj.babel);
+    if (obj.babel.includes(key)) {
+      //includes实现部分匹配
+      ans.push([...path]);
+    }
+    if (obj.child) {
+      for (let i = 0; i < obj.child.length; i++) {
+        dfs(obj.child[i], [...path]);
+      }
+    }
+  }
+  dfs(testObj, []);
+  return ans;
+}
