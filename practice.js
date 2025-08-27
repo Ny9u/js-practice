@@ -2630,3 +2630,147 @@ function search(key) {
   dfs(testObj, []);
   return ans;
 }
+
+// 发布订阅
+class eventEmitter {
+  constructor() {
+    this.events = {};
+  }
+  // 发布事件
+  emit(event) {
+    if (this.events[event]) {
+      this.events[event].forEach((fn) => fn());
+    }
+  }
+  // 订阅事件
+  on(event, fn) {
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    this.events[event].push(fn);
+  }
+
+  // 取消订阅
+  delete(event, fn) {
+    let index = this.events[event].indexOf(fn);
+    if (index !== -1) {
+      this.events[event].splice(index, 1);
+    }
+  }
+}
+
+// 防抖
+function debounce(fn, delay) {
+  let timer = null;
+  return function () {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, arguments);
+    }, delay);
+  };
+}
+
+// 节流
+function throttle(fn, delay) {
+  let lastTime = null;
+  return function () {
+    if (lastTime === null || Date.now() - lastTime > delay) {
+      fn.apply(this, arguments);
+      lastTime = Date.now();
+    }
+  };
+}
+
+// 使用setTimeout实现setInterval(字节一面)
+function mySetInterval(fn, delay) {
+  let timer = null;
+  function startTimer() {
+    timer = setTimeout(() => {
+      fn.apply(this, arguments);
+      startTimer();
+    }, delay);
+    startTimer();
+  }
+  return {
+    clear() {
+      clearTimeout(timer);
+    },
+  };
+}
+
+// promise.all(字节一面)
+Promise.protoType.myAll = function (promises) {
+  let ans = [];
+  return new Promise((resolve, rejected) => {
+    for (let i = 0; i < promises.length; i++) {
+      if (promises[i] instanceof Promise) {
+        promise[i].then(
+          (res) => {
+            ans.push(res);
+          },
+          (err) => {
+            rejected(err);
+          }
+        );
+      } else {
+        ans.push(promises[i]);
+      }
+    }
+    if (ans.length === promises.length) {
+      resolve(ans);
+    }
+  });
+};
+
+// lodash.get
+// var object = { 'a': [{ 'b': { 'c': 3 } }] };
+function get(obj, path, defaultValue) {
+  //path需要支持数组和字符串
+  if (!obj || !path || path.length === 0) return defaultValue;
+  if (typeof path === "string") {
+    path = path.split(".");
+  }
+  for (let i = 0; i < path.length; i++) {
+    if (obj[path[i]]) {
+      obj = obj[path[i]];
+    } else {
+      return defaultValue;
+    }
+  }
+  return obj;
+}
+
+// 获取url参数(字节一面)
+function getUrlParam(url) {
+  let Url = new URL(url);
+  let protocol = Url.protocol; //协议
+  let host = Url.hostname; //域名
+  let port = Url.port; //端口号
+  let params = Url.search; // 参数
+  let hash = Url.hash; // hash
+
+  return [protocol, host, port, params, hash];
+}
+
+// 实现一个方法，能串行地执行传入的 promises，实现效果与 promise.all 区别只有 "串行执行"(美团二面)
+function myPromise(promises) {
+  let ans = [];
+  return new Promise((resolve, reject) => {
+    let i = 0;
+    while (i < promises.length) {
+      promises[i]
+        .then((res) => {
+          ans.push(res);
+          i++;
+          if (i === promises.length) {
+            resolve(ans);
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }
+  });
+}
