@@ -2774,3 +2774,80 @@ function myPromise(promises) {
     }
   });
 }
+
+// 深拷贝(滴滴二面)
+function deepClone(obj, map = new Map()) {
+  // 处理对象,数组,普通类型,时间类型,set,map
+  if (obj === null || typeof obj !== "object" || typeof obj === "function") {
+    return obj;
+  }
+  if (map.has(obj)) {
+    return map.get(obj);
+  }
+
+  if (obj instanceof Date) {
+    ans = new Date(obj);
+    return ans;
+  }
+  if (obj instanceof Set) {
+    let newSet = new Set();
+    map.set(obj, newSet);
+    obj.forEach((value) => {
+      newSet.add(deepClone(value, map));
+    });
+    return newSet;
+  }
+  if (obj instanceof Map) {
+    let newMap = new Map();
+    map.set(obj, newMap);
+    obj.forEach((value, key) => {
+      newMap.set(deepClone(key, map), deepClone(value, map));
+    });
+    return newMap;
+  }
+
+  let ans = Array.isArray(obj) ? [] : {};
+
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      ans[key] =
+        typeof obj[key] === "object" ? deepClone(obj[key], map) : obj[key];
+    }
+  }
+  map.set(obj, ans);
+  return ans;
+}
+
+// 二分查找
+function binarySearch(arr, target) {
+  let l = 0;
+  let r = arr.length - 1;
+  while (l <= r) {
+    let mid = l + Math.floor((r - l) / 2);
+    if (arr[mid] === target) {
+      return mid;
+    } else if (arr[mid] < target) {
+      l = mid + 1;
+    } else {
+      r = mid - 1;
+    }
+  }
+  return -1;
+}
+
+// 反转字符串中的单词(美团二面)
+/*
+I want apple -> I tnaw elppa
+*/
+function reverseStrItem(str) {
+  let ans = "";
+  str = str.split(" ");
+  for (let i = 0; i < str.length; i++) {
+    let v = str[i];
+    ans += v.split("").reverse().join("");
+    if (i < str.length - 1) {
+      ans += " ";
+    }
+  }
+  return ans;
+}
