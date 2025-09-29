@@ -2851,3 +2851,298 @@ function reverseStrItem(str) {
   }
   return ans;
 }
+
+// n层数组拍平(快手二面)
+// 出入几层就拍平几层
+function flatten(arr, n) {
+  if (n <= 0) {
+    return arr;
+  }
+  while (n) {
+    let newArr = [];
+    for (let i = 0; i < arr.length; i++) {
+      if (Array.isArray(arr[i])) {
+        newArr.push(...arr[i]);
+      } else {
+        newArr.push(arr[i]);
+      }
+    }
+    arr = newArr;
+    n--;
+  }
+  return arr;
+}
+
+// 数组去重(快手二面)
+function uniqueArr(arr) {
+  let arrSet = new Set(arr);
+  return Array.from(arrSet);
+}
+
+// promise并发控制器(快手一面)
+// 传入一个数,表示最大并发数
+class PromiseController {
+  constructor(promises, limit) {
+    this.tasks = promises;
+    this.limit = limit;
+    this.running = 0;
+  }
+
+  add(promise) {
+    this.tasks.push(promise);
+  }
+
+  run() {
+    // 取出最多limit个任务进行执行
+    let ans = [];
+    if (this.running >= this.limit || this.tasks.length === 0) return;
+    return new Promise((resolve, reject) => {
+      while (ans.length < this.limit && this.tasks.length) {
+        let task = this.tasks.shift();
+        this.running++;
+        task
+          .then((res) => {
+            this.running--;
+            ans.push(res);
+          })
+          .catch((err) => {
+            this.running--;
+            ans.push(err);
+          });
+      }
+      if (ans.length >= this.limit || this.tasks.length === 0) {
+        resolve(ans);
+      }
+    });
+  }
+}
+
+// 深拷贝(快手一面)
+function deepClone(obj, map = new Map()) {
+  // 判断是不是引用类型
+  let ans = null;
+  // 先检查缓存
+  if (map.has(obj)) {
+    return map.get(obj);
+  }
+  if (typeof obj === "object" && obj !== null) {
+    ans = obj;
+    return ans;
+  }
+  // 特殊处理Date,Map,Set类型
+  if (obj instanceof Date) {
+    ans = new Date(obj);
+    map.set(obj, ans);
+    return ans;
+  }
+  if (obj instanceof Set) {
+    let newSet = new Set();
+    for (let item of obj) {
+      if (typeof item === "object" && item !== null) {
+        newSet.add(deepClone(item, map));
+      } else {
+        newSet.add(item);
+      }
+    }
+    map.set(obj, newSet);
+    return newSet;
+  }
+  if (obj instanceof Map) {
+    let newMap = new Map();
+    for (let [key, value] of obj) {
+      if (typeof key === "object" && key !== null) {
+        newMap.set(deepClone(key, map), deepClone(value, map));
+      } else {
+        newMap.set(key, value);
+      }
+    }
+    map.set(obj, newMap);
+    return newMap;
+  }
+  // 处理普通对象
+  ans = Array.isArray(obj) ? [] : {};
+  for (let key in obj) {
+    if (obj.hasOwnPerperty(key)) {
+      let v = obj[key];
+      if (Array.isArray(v)) {
+        if (typeof v === "object") ans.push(deepClone(v, map));
+        else ans.push(v);
+      } else {
+        if (typeof v === "object") ans[key] = deepClone(v, map);
+        else ans[key] = v;
+      }
+    }
+  }
+  map.set(obj, ans);
+  return ans;
+}
+
+// 带数字的有效括号(快手一面)
+function isValidStr(s) {
+  // 左括号入栈,右括号出栈
+  let stack = [];
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === "(" || s[i] === "[" || s[i] === "{") {
+      stack.push(s[i]);
+    } else {
+      if (!isNaN(parseInt(s[i])) && stack.length === 0) return false;
+      if (!isNaN(parseInt(s[i]))) continue;
+      let top = stack[stack.length - 1];
+      if (s[i] === ")") {
+        if (top === "(") stack.pop();
+        else return false;
+      } else if (s[i] === "]") {
+        if (top === "[") stack.pop();
+        else return false;
+      } else if (s[i] === "}") {
+        if (top === "{") stack.pop();
+        else return false;
+      }
+    }
+  }
+  return stack.length === 0;
+}
+
+// 数组转树(快手一面)
+/*
+data = [
+ {id: 1, pid: null, name: '中国'},
+ {id: 2, pid: 1, name: '广东省'},
+ {id: 3, pid: 1, name: '四川省'},
+ {id: 5, pid: 2, name: '深圳市'},
+ {id: 4, pid: 2, name: '中山市'},
+ {id: 8, pid: 1, name: '湖北省'},
+]
+*/
+function arrToTree(data, parentId = null) {
+  let tree = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].pid === parentId) {
+      let obj = {
+        id: data[i].id,
+        name: data[i].name,
+        children: arrToTree(data, data[i].id),
+      };
+      tree.push(obj);
+    }
+  }
+  return JSON.stringify(tree, null, 2);
+}
+
+// 快速排序
+function quickSort(arr) {
+  let p = arr[0];
+  let arr1 = [];
+  let arr2 = [];
+  if (arr.length <= 1) return arr;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] >= p) {
+      arr2.push(arr[i]);
+    } else {
+      arr1.push(arr[i]);
+    }
+  }
+  return [...quickSort(arr1), p, ...quickSort(arr2)];
+}
+
+// 数组拍平
+function flatten(arr, n) {
+  if (n <= 0) return arr;
+  while (n) {
+    let newArr = [];
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (Array.isArray(arr[i])) {
+        newArr.push(...arr[i]);
+      } else {
+        newArr.push(arr[i]);
+      }
+    }
+    arr = newArr;
+    n--;
+  }
+  return arr;
+}
+
+// 手写bind
+Function.prototype.bind = function (context, ...args) {
+  let self = this; // 当前函数
+  return function () {
+    self.apply(this instanceof self ? this : context, args.concat(arguments));
+  };
+};
+
+// 手写call
+Function.prototype.call = function (context, ...args) {
+  context = context || window;
+  context.fn = this;
+  let res = context.fn(...args);
+  delete context.fn;
+  return res;
+};
+
+// 请求hook
+// 请求函数,依赖项
+function useRequest(fn, dep) {
+  let isFirst = true;
+  useEffect(() => {
+    if (!isFirst) {
+      fn();
+    }
+    isFirst = false;
+  }, [dep]);
+}
+
+// 请求并发限制器
+class handleRequest {
+  constructor(limit) {
+    this.limit = limit;
+    this.pool = [];
+    this.isRunning = 0;
+  }
+
+  add(fn) {
+    this.pool.push(fn);
+  }
+
+  // 执行请求
+  action() {
+    return new Promise((resolve, reject) => {
+      let n = this.limit - this.isRunning;
+      if (n === 0 || this.pool.length === 0) {
+        resolve();
+      }
+      let requestArr =
+        n <= this.pool.length ? this.pool.slice(0, n) : this.pool;
+      let ans = [];
+      this.isRunning += requestArr.length;
+      for (let i = 0; i < requestArr.length; i++) {
+        requestArr[i]().then(
+          (res) => {
+            ans.push(res);
+          },
+          (err) => {
+            ans.push(err);
+          }
+        );
+        if (i === n - 1) resolve(ans);
+      }
+    });
+  }
+}
+
+// 实现一个工具类型，返回一个数组中每个元素的类型组成的联合类型
+function findElementType(arr) {
+  let ans = new Set();
+  function parseElement(item) {
+    let name = Object.prototype.toString.call(item);
+    let index = name.indexOf(" ");
+    let type = name.slice(index + 1, name.length - 1);
+    return type;
+  }
+  for (let i = 0; i < arr.length; i++) {
+    let res = parseElement(arr[i]);
+    ans.add(res);
+  }
+  ans = Array.from(ans).join(" | ");
+  console.log(ans);
+}
