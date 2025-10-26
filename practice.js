@@ -3146,3 +3146,185 @@ function findElementType(arr) {
   ans = Array.from(ans).join(" | ");
   console.log(ans);
 }
+
+// 实现一个工具函数，将一个带有缩进关系的字符串转为具有对应层级关系的树
+/* const str =`
+1
+  2
+3
+  4
+    6`
+--> 
+[
+  {
+      "id": 1,
+      "children": [
+          {
+              "id": 2
+          }
+      ]
+  },
+  {
+      "id": 3,
+      "children": [
+          {
+              "id": 4,
+              "children": [
+                  {
+                      "id": 6
+                  }
+              ]
+          }
+      ]
+  }
+]
+// 增强版例子
+const str =`
+ 1
+    2
+        3
+      4
+2
+    3
+333`
+*/
+function transformTree(s) {
+  let nums = s.split("\n").filter((item) => item !== "");
+  nums = nums.map((item) => {
+    let id = item.trim();
+    let spaceNum = 0;
+    for (let i = 0; i < item.length; i++) {
+      if (item[i] === " ") {
+        spaceNum++;
+      } else {
+        break;
+      }
+    }
+    return { id, spaceNum };
+  });
+  let ans = [];
+  let stack = [];
+  for (const { id, spaceNum } of nums) {
+    let cur = { id };
+    while (stack.length && stack[stack.length - 1].spaceNum >= spaceNum) {
+      stack.pop();
+    }
+    if (stack.length === 0) {
+      ans.push(cur);
+    } else {
+      const parent = stack[stack.length - 1].node;
+      if (!parent.children) {
+        parent.children = [];
+      }
+      parent.children.push(cur);
+    }
+    stack.push({ node: cur, spaceNum });
+  }
+  console.log(ans);
+}
+
+// 有序数组元素去重,空间复杂度O(1)
+function uniqueArr(arr) {
+  let index = 0; // 上一个不重复元素的下标
+  for (let j = 1; j < arr.length; j++) {
+    if (arr[j] !== arr[index]) {
+      arr[index++] = arr[j];
+    }
+  }
+  return arr.slice(0, index + 1);
+}
+
+// promise.all
+function all(arr) {
+  let ans = [];
+  return new Promise((resolve, reject) => {
+    if (!Array.isArray(arr)) reject("not Array");
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] instanceof Promise) {
+        arr[i].then(
+          (res) => {
+            ans.push(res);
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+      } else {
+        ans.push(arr[i]);
+      }
+    }
+    if (ans.length === arr.length) {
+      resolve(ans);
+    }
+  });
+}
+
+/*
+const obj = {
+  a: {
+      b: 1,
+      c: 2,
+      d: {e: 5}
+  },
+  b: [1, 3, {a: 2, b: 3}],
+  c: 3
+}
+  
+  flatten(obj) 结果返回如下
+  /**
+ {
+    a.b: 1,
+    a.c: 2,
+    a.d.e: 5,
+    b[0]: 1,
+    b[1]: 3,
+    b[2].a: 2,
+    b[3].b: 3,
+    c: 3
+  }
+*/
+function flatten(obj) {
+  let ans = {};
+  function fn(object, path) {
+    // 负责解析
+    for (let key in object) {
+      if (object.hasOwnProperty(key)) {
+        let newKey = Array.isArray(object)
+          ? path + "[" + key + "]"
+          : path + "." + key;
+        if (typeof object[key] === "object") {
+          fn(object[key], newKey);
+        } else {
+          ans[newKey] = object[key];
+        }
+      }
+    }
+  }
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (typeof obj[key] === "object") {
+        fn(obj[key], key);
+      } else {
+        ans[key] = obj[key];
+      }
+    }
+  }
+  return ans;
+}
+
+// 对象浅合并
+function assign(target, ...source) {
+  if (target === null || target === undefined) {
+    throw new TypeError("Cannot convert undefined or null to object");
+  }
+  target = Object(target);
+  for (let i = 0; i < source.length; i++) {
+    if (source[i] === null || source[i] === undefined) continue;
+    for (let key in source[i]) {
+      if (source[i].hasOwnProperty(key)) {
+        target[key] = source[i][key];
+      }
+    }
+  }
+  return target;
+}
