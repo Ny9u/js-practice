@@ -3328,3 +3328,445 @@ function assign(target, ...source) {
   }
   return target;
 }
+
+// 一行实现多重嵌套数组的扁平化跟去重(作业帮二面)
+function myFlat(arr) {
+  return Array.from(new Set(arr.flat(Infinity)));
+}
+
+// 使用栈模拟队列,数组只能使用push跟pop方法实现队列(作业帮二面)
+class MyQueue {
+  constructor() {
+    this.queue = [];
+  }
+
+  in(item) {
+    this.queue.push(item);
+  }
+
+  out() {
+    let v = this.queue.reverse().pop();
+    this.queue.reverse();
+    return v;
+  }
+}
+
+// 多维数组扁平为一维数组(字节一面)
+/*
+不允许用高级API
+let arr = [1,2,[3,4,[5,[6]]],7]
+*/
+function deepFlat(arr) {
+  let ans = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (Array.isArray(arr[i])) {
+      ans = ans.concat(deepFlat(arr[i]));
+    } else {
+      ans.push(arr[i]);
+    }
+  }
+  return ans;
+}
+
+// Promise.all
+function all(arr) {
+  return new Promise((resolve, reject) => {
+    if (!Array.isArray(arr)) reject("not Array");
+    let ans = new Array(arr.length + 1);
+    let num = 0;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] instanceof Promise) {
+        arr[i].then(
+          (res) => {
+            ans[i] = res;
+            num++;
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+      } else {
+        ans[i] = arr[i];
+        num++;
+      }
+      if (num === arr.length) {
+        resolve(ans);
+      }
+    }
+  });
+}
+
+// Promise.allSettled
+function allSettled(arr) {
+  return new Promise((resolve, reject) => {
+    let ans = new Array(arr.length + 1);
+    let num = 0;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] instanceof Promise) {
+        arr[i].then(
+          (res) => {
+            ans[i] = { status: "fullfilled", value: res };
+            num++;
+          },
+          (err) => {
+            ans[i] = { status: "rejected", reason: err };
+            num++;
+          }
+        );
+      } else {
+        ans[i] = { status: "fullfilled", value: arr[i] };
+        num++;
+      }
+      if (num === arr.length) {
+        resolve(ans);
+      }
+    }
+  });
+}
+
+// 数组拍平n层
+function flat(arr, n) {
+  let ans = [];
+  if (n === 0) return arr;
+  while (n) {
+    for (let i = 0; i < arr.length; i++) {
+      if (Array.isArray(arr[i])) {
+        ans = ans.concat(arr[i]); // ans = ans.push(...arr[i])
+      } else {
+        ans.push(arr[i]);
+      }
+    }
+    n--;
+  }
+  return ans;
+}
+
+// promise.retry(拼多多一面)
+/*
+实现一个promise.retry函数，接收一个返回promise的函数和重试次数作为参数，
+重试如果获取到正常返回则resolve,否则重试到最大重试次数
+*/
+function retry(promiseFn, times) {
+  return new Promise((resolve, reject) => {
+    function retryFn(t) {
+      fn().then(
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          if (t <= 1) {
+            reject(err);
+          } else {
+            retryFn(t - 1);
+          }
+        }
+      );
+    }
+    let fn = promiseFn();
+    fn().then(
+      (res) => {
+        resolve(res);
+      },
+      (err) => {
+        retryFn(fn, times);
+      }
+    );
+  });
+}
+
+// 数组扁平化(拼多多一面)
+/*
+Infinity -1 === Infinity
+*/
+Array.prototype.flat = function (n = 1) {
+  let ans = [];
+  if (n === 0) return this;
+  for (let i = 0; i < this.length; i++) {
+    if (Array.isArray(this[i])) {
+      ans = ans.concat(this[i].flat(n - 1));
+    } else {
+      ans.push(this[i]); // push返回数组长度
+    }
+  }
+  return ans;
+};
+
+// 函数柯里化
+function curry(fn) {
+  let n = fn.length;
+  let params = [];
+  return function a(...args) {
+    params.push(...args);
+    if (params.length >= n) {
+      return fn.call(this, ...params);
+    } else {
+      return a;
+    }
+  };
+}
+
+// 实现apply
+Function.prototype.apply = function (context, args) {
+  // 参数为上下文跟参数(数组)
+  context = context || window;
+  context.fn = this;
+  let ans = context.fn(...args);
+  delete context.fn;
+  return ans;
+};
+
+// 时间转换
+/*
+输入一个时间戳,返回对该时间的判断(例如多少秒前,多少分钟前,多少小时前,多少天前)
+*/
+function transformTime(timestamp) {
+  let now = Date.now();
+  let diff = now - timestamp; // 毫秒
+  // 1天 = 24小时 = 24*60分钟 = 24*60*60秒 = 24*60*60*1000毫秒
+  if (diff < 1000 * 60) {
+    // 秒
+    console.log(Math.floor(diff / 1000) + "秒前");
+  } else if (diff >= 1000 * 60 && diff < 1000 * 60 * 60) {
+    // 分钟
+    console.log(Math.floor(diff / (1000 * 60)) + "分钟前");
+  } else if (diff >= 1000 * 60 * 60 && diff < 1000 * 60 * 60 * 24) {
+    // 小时
+    console.log(Math.floor(diff / (1000 * 60 * 60)) + "小时前");
+  } else {
+    // 天
+    console.log(Math.floor(diff / (1000 * 60 * 60 * 24)) + "天前");
+  }
+}
+
+// 四则运算
+/*
+输入一个带括号的四则运算表达式字符串,返回计算结果
+*/
+function calculate(expr) {
+  let index = 0; // 当前解析的位置
+  // 解析加减(低优先级)
+  function parseExpression() {
+    let result = parseTerm();
+    while (index < expr.length) {
+      let char = expr[index];
+      if (char === "+" || char === "-") {
+        index++;
+        let rightNum = parseTerm();
+        result = char === "+" ? result + rightNum : result - rightNum;
+      } else {
+        break;
+      }
+    }
+    return result;
+  }
+  // 解析乘除(中优先级)
+  function parseTerm() {
+    let result = parseFactor();
+    while (index < expr.length) {
+      let char = expr[index];
+      if (char === "*" || char === "/") {
+        index++;
+        let rightNum = parseFactor();
+        result = char === "*" ? result * rightNum : result / rightNum;
+      } else {
+        break;
+      }
+    }
+    return result;
+  }
+  // 解析括号或数字(高优先级)
+  function parseFactor() {
+    let char = expr[index];
+    if (char === "(") {
+      // 处理括号
+      index++;
+      let result = parseExpression();
+      if (expr[index] === ")") {
+        index++;
+      }
+      return result;
+    } else {
+      // 处理数字
+      let num = "";
+      while (index < expr.length && expr[index] >= "0" && expr[index] <= "9") {
+        num += expr[index];
+        index++;
+      }
+      return num - 0;
+    }
+  }
+  return parseExpression();
+}
+
+// 找出字符串中所有回文串
+function findStr(str) {
+  let ans = [];
+  function find(l, r) {
+    while (l <= r && l >= 0 && r < str.length) {
+      if (str[l] === str[r]) {
+        ans.push(str.slice(l, r + 1));
+        l--;
+        r++;
+      } else {
+        break;
+      }
+    }
+  }
+  for (let i = 0; i < str.length; i++) {
+    find(i, i);
+    find(i, i + 1);
+  }
+  return [...new Set(ans)];
+}
+
+// 版本号排序
+/*
+["1.0.1", "1", "1.0.2", "2.0", "1.10"]
+从小到大排序版本号,当首位相同时短的在前面
+*/
+function sortVersions(arr) {
+  arr.sort((a, b) => {
+    let aArr = a.split(".");
+    let bArr = b.split(".");
+    let maxLength = Math.max(aArr.length, bArr.length);
+    for (let i = 0; i < maxLength; i++) {
+      let v1 = aArr[i] ? aArr[i] - 0 : 0;
+      let v2 = bArr[i] ? bArr[i] - 0 : 0;
+      if (v1 !== v2) {
+        return v1 - v2;
+      }
+    }
+    return 0;
+  });
+  return arr;
+}
+
+// instanceof
+function myInstanceof(obj, Constructor) {
+  if (obj === null || obj === undefined) return false;
+  let a = obj;
+  while (a.__proto__) {
+    if (a.__proto__ === Constructor.prototype) {
+      return true;
+    } else {
+      a = a.__proto__;
+    }
+  }
+  return false;
+}
+
+// 输入无序正整数可重复数列，找出所有去重的递增子序列
+/*
+输出一个数组，元素为格式化的各子序列，且是升序排序的。
+用例：输入[7,7,8,3,5,4,4,2] 输出["2->5", "7->8"...]
+*/
+function find(arr) {
+  arr = [...new Set(arr)];
+  let ans = [];
+  let path = [];
+  function backtrace(index) {
+    if (path.length >= 2) {
+      ans.push(path.join("->"));
+    }
+    for (let i = index; i < arr.length; i++) {
+      if (path.length && arr[i] < path[path.length - 1]) {
+        continue;
+      }
+      path.push(arr[i]);
+      backtrace(i + 1);
+      path.pop();
+    }
+  }
+  backtrace(0);
+  return ans;
+}
+
+// 判断完全平方数
+function judge(num) {
+  let left = 0;
+  let right = num;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (mid * mid === num) {
+      return true;
+    } else if (mid * mid < num) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  return false;
+}
+
+// url转参数对象
+function transformUrl(url) {
+  let u = new URL(url);
+  function fn(str) {
+    str = str.slice(1);
+    let params = {};
+    str = str.split("&");
+    for (let i = 0; i < str.length; i++) {
+      const [key, value] = str[i].split("=");
+      params[key] = value;
+    }
+    return params;
+  }
+  let obj = {
+    // 协议,域名,端口号,路径,参数
+    protocol: u.protocol,
+    host: u.hostname,
+    port: u.port,
+    path: u.pathname,
+    params: fn(u.search),
+  };
+  return obj;
+}
+
+// 防抖
+function debounce(fn, delay) {
+  let timer = null;
+  return function () {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, arguments);
+    }, delay);
+  };
+}
+
+// 手写eventBus
+class eventBus {
+  constructor() {
+    this.events = {};
+  }
+
+  // 订阅
+  on(event, fn) {
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    this.events[event].push(fn);
+  }
+
+  // 发布
+  emit(event) {
+    if (this.events[event]) {
+      this.events[event].forEach((fn) => fn());
+    }
+  }
+}
+
+// 数组拍平
+function flat(arr, n) {
+  let ans = [];
+  if (n === 0) return arr;
+  for (let i = 0; i < arr.length; i++) {
+    if (Array.isArray(arr[i])) {
+      ans = ans.concat(flat(arr[i], n - 1));
+    } else {
+      ans.push(arr[i]);
+    }
+  }
+  return ans;
+}
